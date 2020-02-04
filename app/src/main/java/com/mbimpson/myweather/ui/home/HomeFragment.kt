@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.mbimpson.myweather.GlobalVariables
 import com.mbimpson.myweather.R
 import java.net.URL
 import org.json.JSONObject
@@ -31,7 +32,8 @@ class HomeFragment : Fragment() {
         val titleTextView: TextView = root.findViewById(R.id.text_home)
         homeViewModel.text.observe(this, Observer {
             // textView.text = it
-            titleTextView.text = "Bogota"
+            var globalVars = GlobalVariables()
+            titleTextView.text = globalVars.city
         })
 
         weatherTask().execute()
