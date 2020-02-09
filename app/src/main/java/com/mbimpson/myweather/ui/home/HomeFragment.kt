@@ -20,7 +20,6 @@ import org.json.JSONObject
 class HomeFragment : Fragment() {
 
     private lateinit var homeViewModel: HomeViewModel
-    private var ApiKey: String = "82f7257b8b5d34b40d1c68d340f6db8d"
     private var City: String = "Bogota"
 
     override fun onCreateView(
@@ -46,8 +45,9 @@ class HomeFragment : Fragment() {
     inner class weatherTask(): AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String? {
             var response:String?
+            val apiKey = GlobalVariables().ApiKey
             try{
-                response = URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$ApiKey").readText(
+                response = URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
             }catch (e: Exception){
