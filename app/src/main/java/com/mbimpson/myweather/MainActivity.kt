@@ -1,5 +1,6 @@
 package com.mbimpson.myweather
 
+import android.content.Context
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -25,5 +26,15 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        this.initialiseSharedPreferences()
+    }
+
+    private fun initialiseSharedPreferences() {
+        val sharedPrefs = getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPrefs.edit()) {
+            putString(getString(R.string.prefs_city_key), "Bogota")
+            commit()
+        }
     }
 }

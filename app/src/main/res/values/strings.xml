@@ -7,4 +7,7 @@
     <string name="edit_country_hint">Enter your country</string>
     <string name="text_city">City:</string>
     <string name="edit_city_hint">Enter your city</string>
+
+    <string name="prefs_name">AppPrefs</string>
+    <string name="prefs_city_key">Prefs_City</string>
 </resources>
