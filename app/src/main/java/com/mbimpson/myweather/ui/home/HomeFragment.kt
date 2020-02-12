@@ -28,23 +28,21 @@ class HomeFragment : Fragment() {
         val city = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
         titleTextView.text = city
 
-        weatherTask().execute()
+        WeatherTask().execute()
 
         return root
     }
 
-    inner class weatherTask(): AsyncTask<String, Void, String>() {
+    inner class WeatherTask: AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String? {
-            var response:String?
             val apiKey = GlobalVariables().ApiKey
-            try{
-                response = URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
+            return try{
+                URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
             }catch (e: Exception){
-                response = null
+                null
             }
-            return response
         }
 
         private fun getLabelText(label: String, id: String, json: JSONObject): String {
