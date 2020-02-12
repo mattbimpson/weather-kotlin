@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_temp"
         android:layout_marginTop="80dp"
-        android:layout_marginLeft="50dp"
+        android:layout_marginLeft="100dp"
         android:text="MIN"
         android:textSize="35sp"
         app:layout_constraintLeft_toLeftOf="@id/text_temp_max"
@@ -50,10 +50,22 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/text_temp"
         android:layout_marginTop="80dp"
-        android:layout_marginRight="50dp"
+        android:layout_marginRight="100dp"
         android:text="MAX"
         android:textSize="35sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/text_temp_min"
         app:layout_constraintTop_toTopOf="@id/text_temp" />
+
+    <TextView
+        android:id="@+id/text_feels_like"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="216dp"
+        android:text="FEELS_LIKE"
+        android:textSize="35sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

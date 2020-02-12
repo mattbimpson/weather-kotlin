@@ -47,20 +47,26 @@ class HomeFragment : Fragment() {
             return response
         }
 
+        private fun getLabelText(label: String, id: String, json: JSONObject): String {
+            return label + ": " + json.getString(id)
+        }
+
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             try {
                 val jsonObj = JSONObject(result)
                 val main = jsonObj.getJSONObject("main")
-                val temp = main.getString("temp")+"°C"
-                val tempMin = "min: " + main.getString("temp_min")
-                val tempMax = "max: " + main.getString("temp_max")
+                val temp = getLabelText("temp", "temp", main)+"°C"
+                val tempMin = getLabelText("min", "temp_min", main)
+                val tempMax = getLabelText("max", "temp_max", main)
+                val feelsLike = getLabelText("feels like", "feels_like", main)
 
                 val view = view
                 if (view != null) {
                     view.findViewById<TextView>(R.id.text_temp).text = temp
                     view.findViewById<TextView>(R.id.text_temp_max).text = tempMax
                     view.findViewById<TextView>(R.id.text_temp_min).text = tempMin
+                    view.findViewById<TextView>(R.id.text_feels_like).text = feelsLike
                 }
             }catch (e: Exception) {
                 // Toast.makeText(this, "An error occurred retreiving weather", Toast.LENGTH_LONG).show()
