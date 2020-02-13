@@ -33,42 +33,47 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    private fun getLabelText(label: String, id: String, json: JSONObject): String {
+        return label + ": " + json.getString(id)
+    }
+
+    protected fun parseResults(result: String?) {
+        try {
+            val jsonObj = JSONObject(result)
+            val main = jsonObj.getJSONObject("main")
+            val temp = getLabelText("temp", "temp", main)+"°C"
+            val tempMin = getLabelText("min", "temp_min", main)
+            val tempMax = getLabelText("max", "temp_max", main)
+            val feelsLike = getLabelText("feels like", "feels_like", main)
+
+            val view = view
+            if (view != null) {
+                view.findViewById<TextView>(R.id.text_temp).text = temp
+                view.findViewById<TextView>(R.id.text_temp_max).text = tempMax
+                view.findViewById<TextView>(R.id.text_temp_min).text = tempMin
+                view.findViewById<TextView>(R.id.text_feels_like).text = feelsLike
+            }
+        }catch (e: Exception) {
+            // Toast.makeText(this, "An error occurred retreiving weather", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
     inner class WeatherTask: AsyncTask<String, Void, String>() {
         override fun doInBackground(vararg params: String?): String? {
             val apiKey = GlobalVariables().ApiKey
-            return try{
-                URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
+            try{
+                return URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
             }catch (e: Exception){
-                null
+                return null
             }
-        }
-
-        private fun getLabelText(label: String, id: String, json: JSONObject): String {
-            return label + ": " + json.getString(id)
         }
 
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
-            try {
-                val jsonObj = JSONObject(result)
-                val main = jsonObj.getJSONObject("main")
-                val temp = getLabelText("temp", "temp", main)+"°C"
-                val tempMin = getLabelText("min", "temp_min", main)
-                val tempMax = getLabelText("max", "temp_max", main)
-                val feelsLike = getLabelText("feels like", "feels_like", main)
-
-                val view = view
-                if (view != null) {
-                    view.findViewById<TextView>(R.id.text_temp).text = temp
-                    view.findViewById<TextView>(R.id.text_temp_max).text = tempMax
-                    view.findViewById<TextView>(R.id.text_temp_min).text = tempMin
-                    view.findViewById<TextView>(R.id.text_feels_like).text = feelsLike
-                }
-            }catch (e: Exception) {
-                // Toast.makeText(this, "An error occurred retreiving weather", Toast.LENGTH_LONG).show()
-            }
+            parseResults(result)
         }
     }
 }
