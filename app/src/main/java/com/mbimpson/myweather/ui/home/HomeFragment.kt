@@ -1,21 +1,26 @@
 package com.mbimpson.myweather.ui.home
 
 import android.content.Context
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.mbimpson.myweather.GlobalVariables
 import com.mbimpson.myweather.R
-import java.net.URL
 import org.json.JSONObject
+import java.net.URL
+
 
 class HomeFragment : Fragment() {
 
     private var City: String = "Bogota"
+    private var listener: OnSharedPreferenceChangeListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,6 +33,19 @@ class HomeFragment : Fragment() {
         val city = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
         titleTextView.text = city
 
+        listener = OnSharedPreferenceChangeListener { prefs, key ->
+            if (key == "Prefs_City") {
+                Log.d("Shared Prefs Listener", "City changed")
+                val newValue = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
+                if (newValue != null) {
+                    this.City = newValue
+                    WeatherTask().execute()
+                }
+            }
+        }
+
+        sharedPrefs?.registerOnSharedPreferenceChangeListener(listener)
+
         WeatherTask().execute()
 
         return root
@@ -37,7 +55,7 @@ class HomeFragment : Fragment() {
         return label + ": " + json.getString(id)
     }
 
-    protected fun parseResults(result: String?) {
+    private fun parseResults(result: String?) {
         try {
             val jsonObj = JSONObject(result)
             val main = jsonObj.getJSONObject("main")
@@ -54,9 +72,12 @@ class HomeFragment : Fragment() {
                 view.findViewById<TextView>(R.id.text_feels_like).text = feelsLike
             }
         }catch (e: Exception) {
-            // Toast.makeText(this, "An error occurred retreiving weather", Toast.LENGTH_LONG).show()
+            this.showToast("An error occurred retrieving weather")
         }
+    }
 
+    private fun showToast(message: String) {
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show()
     }
 
     inner class WeatherTask: AsyncTask<String, Void, String>() {
