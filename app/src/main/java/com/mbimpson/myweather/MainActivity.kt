@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private fun initialiseSharedPreferences() {
         val sharedPrefs = getPreferences(Context.MODE_PRIVATE) ?: return
         with (sharedPrefs.edit()) {
-            putString(getString(R.string.prefs_city_key), "Bogota")
+            putString(getString(R.string.prefs_city_key), "")
             commit()
         }
     }

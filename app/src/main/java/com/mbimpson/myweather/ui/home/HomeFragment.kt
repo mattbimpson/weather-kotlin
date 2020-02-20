@@ -19,7 +19,6 @@ import java.net.URL
 
 class HomeFragment : Fragment() {
 
-    private var City: String = "Bogota"
     private var listener: OnSharedPreferenceChangeListener? = null
 
     override fun onCreateView(
@@ -32,17 +31,6 @@ class HomeFragment : Fragment() {
         val sharedPrefs = activity?.getPreferences(Context.MODE_PRIVATE)
         val city = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
         titleTextView.text = city
-
-        listener = OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == "Prefs_City") {
-                Log.d("Shared Prefs Listener", "City changed")
-                val newValue = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
-                if (newValue != null) {
-                    this.City = newValue
-                    WeatherTask().execute()
-                }
-            }
-        }
 
         sharedPrefs?.registerOnSharedPreferenceChangeListener(listener)
 
@@ -84,10 +72,13 @@ class HomeFragment : Fragment() {
         override fun doInBackground(vararg params: String?): String? {
             val apiKey = GlobalVariables().ApiKey
             try{
-                return URL("https://api.openweathermap.org/data/2.5/weather?q=$City&units=metric&appid=$apiKey").readText(
+                val sharedPrefs = activity?.getPreferences(Context.MODE_PRIVATE)
+                val city = sharedPrefs?.getString(getString(R.string.prefs_city_key), null)
+                return URL("https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey").readText(
                     Charsets.UTF_8
                 )
             }catch (e: Exception){
+                Log.d("WeatherTask", "Error getting weather")
                 return null
             }
         }
