@@ -39,28 +39,50 @@ class HomeFragment : Fragment() {
         return root
     }
 
-    private fun getLabelText(label: String, id: String, json: JSONObject): String {
-        return label + ": " + json.getString(id)
-    }
+    data class Temps(val temp: String, val min: String, val max: String, val feelsLike: String)
 
-    private fun parseResults(result: String?) {
+    private fun getTemps(result: String?): Temps {
         try {
             val jsonObj = JSONObject(result)
             val main = jsonObj.getJSONObject("main")
-            val temp = getLabelText("temp", "temp", main)+"°C"
-            val tempMin = getLabelText("min", "temp_min", main)
-            val tempMax = getLabelText("max", "temp_max", main)
-            val feelsLike = getLabelText("feels like", "feels_like", main)
+            val temp = main.getString("temp")
+            val tempMin = main.getString("temp_min")
+            val tempMax = main.getString("temp_max")
+            val feelsLike = main.getString("feels_like")
 
-            val view = view
-            if (view != null) {
-                view.findViewById<TextView>(R.id.text_temp).text = temp
-                view.findViewById<TextView>(R.id.text_temp_max).text = tempMax
-                view.findViewById<TextView>(R.id.text_temp_min).text = tempMin
-                view.findViewById<TextView>(R.id.text_feels_like).text = feelsLike
-            }
-        }catch (e: Exception) {
-            this.showToast("An error occurred retrieving weather")
+            return Temps(temp, tempMin, tempMax, feelsLike)
+        }catch(e: Exception) {
+            showToast("Error displaying weather results")
+            return Temps("", "", "", "")
+        }
+    }
+
+    private fun parseResults(result: String?) {
+        val temps = getTemps(result)
+        val view = view
+        if (view != null) {
+            view.findViewById<TextView>(R.id.text_temp).text = "temp: " + temps.temp +"°C"
+            view.findViewById<TextView>(R.id.text_temp_max).text = "max: " +temps.max
+            view.findViewById<TextView>(R.id.text_temp_min).text = "min: " + temps.min
+            view.findViewById<TextView>(R.id.text_feels_like).text = "feels like: " + temps.feelsLike
+        }
+    }
+
+    private fun setBackgroundColour(temp: String) {
+        if (temp == null || temp == "") {
+            return
+        }
+        if (temp.toDouble() < 10) {
+            view?.setBackgroundResource(R.drawable.bg_gradient_cold)
+            return
+        }
+        if (temp.toDouble() < 22) {
+            view?.setBackgroundResource(R.drawable.bg_gradient_med)
+            return
+        }
+        if (temp.toDouble() >= 22) {
+            view?.setBackgroundResource(R.drawable.bg_gradient_hot)
+            return
         }
     }
 
@@ -86,6 +108,7 @@ class HomeFragment : Fragment() {
         override fun onPostExecute(result: String?) {
             super.onPostExecute(result)
             parseResults(result)
+            setBackgroundColour(getTemps(result).temp)
         }
     }
 }
